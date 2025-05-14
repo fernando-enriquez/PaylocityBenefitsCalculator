@@ -1,6 +1,9 @@
 using Api.Data;
+using Api.Interfaces;
+using Api.Mappings;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using AutoMapper;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,17 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddDbContext<EmployeePaycheckDbContext>(options =>
     options.UseSqlite("Data Source=EmployeePaycheck.db"));
+builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
+builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+
+// Auto Mapper Configurations
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new MappingProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 var app = builder.Build();
 
