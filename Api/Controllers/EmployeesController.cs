@@ -22,6 +22,8 @@ public class EmployeesController : ControllerBase
     public async Task<ActionResult<ApiResponse<List<GetEmployeeDto>>>> GetAll()
     {
         //task: use a more realistic production approach
+
+
         var employees = new List<GetEmployeeDto>
         {
             new()

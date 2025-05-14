@@ -1,3 +1,5 @@
+using Api.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +27,18 @@ builder.Services.AddCors(options =>
         policy => { policy.WithOrigins("http://localhost:3000", "http://localhost"); });
 });
 
+
+builder.Services.AddDbContext<EmployeePaycheckDbContext>(options =>
+    options.UseSqlite("Data Source=EmployeePaycheck.db"));
+
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<EmployeePaycheckDbContext>();
+    db.Database.Migrate(); //apply migrations
+    DbSeeder.Seed(db);     //set the seeder
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
