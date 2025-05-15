@@ -221,35 +221,35 @@ namespace Api.Controllers
             var paycheckDTO = new PaycheckDto
             {
                 Employee = _mapper.Map<GetEmployeeDto>(employee),
-                GrossPayment = employeeSalaryGrossPerCheck,
-                TotalDeductionPerPayCheck = discountPerPaycheck,
-                NetPayment = employeeSalaryNetPerCheck,
+                GrossPayment = Math.Round(employeeSalaryGrossPerCheck,2),
+                TotalDeductionPerPayCheck = Math.Round(discountPerPaycheck,2),
+                NetPayment = Math.Round(employeeSalaryNetPerCheck,2),
 
                 Details = new List<DeductionDetail>
                 {
                     new DeductionDetail
                     {
                         Description = "Base employee cost",
-                        AnnualAmount = annualEmployeeBaseCost,
-                        PerPaycheckAmount = annualEmployeeBaseCost / paychecksPerYear,
+                        AnnualAmount = Math.Round(annualEmployeeBaseCost,2),
+                        PerPaycheckAmount = Math.Round(annualEmployeeBaseCost / paychecksPerYear),
                     },
                     new DeductionDetail
                     {
                         Description = $"Dependent cost ({employee.Dependents.Count} dependents)",
-                        AnnualAmount = employeeDependentCostPerYear,
-                        PerPaycheckAmount = employeeDependentCostPerYear / paychecksPerYear,
+                        AnnualAmount = Math.Round(employeeDependentCostPerYear,2),
+                        PerPaycheckAmount = Math.Round(employeeDependentCostPerYear / paychecksPerYear,2),
                     },
                     new DeductionDetail
                     {
                         Description = $"Extra cost for dependents over {thresholdAge}",
-                        AnnualAmount = employeeDependentOverYearThresholdCostPerYear,
-                        PerPaycheckAmount = employeeDependentOverYearThresholdCostPerYear / paychecksPerYear,
+                        AnnualAmount = Math.Round(employeeDependentOverYearThresholdCostPerYear, 2),
+                        PerPaycheckAmount = Math.Round(employeeDependentOverYearThresholdCostPerYear / paychecksPerYear,2),
                     },
                     new DeductionDetail
                     {
                         Description = $"Extra cost ({thresholdAnnualSalaryFee}% of the annual gross salary) for employee´s salary over {thresholdAnnualSalary}",
-                        AnnualAmount = salaryOverThresholdCostPerYear,
-                        PerPaycheckAmount = salaryOverThresholdCostPerYear / paychecksPerYear,
+                        AnnualAmount = Math.Round(salaryOverThresholdCostPerYear, 2),
+                        PerPaycheckAmount = Math.Round(salaryOverThresholdCostPerYear / paychecksPerYear,2)
                     }
                 }
             };
