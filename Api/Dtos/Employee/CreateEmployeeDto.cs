@@ -17,6 +17,6 @@ namespace Api.Dtos.Employee
         [Required]
         public DateTime? DateOfBirth { get; set; }
 
-        public List<CreateDependentDto>? Dependents { get; set; }
+        public List<CreateDependentDto>? Dependents { get; set; } = new List<CreateDependentDto> { };
     }
 }

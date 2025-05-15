@@ -15,13 +15,15 @@ public class EmployeesController : ControllerBase
 {
     private readonly IRepository<Employee> _employeeRepository;
     private readonly IRepository<Rule> _ruleRepository;
+    private readonly IRepository<Dependent> _dependentRepository;
     private readonly IMapper _mapper;
 
-    public EmployeesController(IRepository<Employee> employeeRepository, IMapper mapper, IRepository<Rule> ruleRepository)
+    public EmployeesController(IRepository<Employee> employeeRepository, IMapper mapper, IRepository<Rule> ruleRepository, IRepository<Dependent> dependentRepository)
     {
         _employeeRepository = employeeRepository;
         _mapper = mapper;
         _ruleRepository = ruleRepository;
+        _dependentRepository = dependentRepository;
     }
 
     [SwaggerOperation(Summary = "Get employee by id")]
@@ -60,7 +62,7 @@ public class EmployeesController : ControllerBase
 
     [SwaggerOperation(Summary = "Save one employee")]
     [HttpPost("")]
-    public async Task<ActionResult<ApiResponse<bool>>> Save([FromBody] CreateEmployeeDto body)
+    public async Task<ActionResult<ApiResponse<GetEmployeeDto>>> Save([FromBody] CreateEmployeeDto body)
     {
         //get validations rules
         var domesticPartnerLimitRule = await _ruleRepository.GetFirstOrDefaultAsync(x => x.Concept == "domesticPartnerQuantityLimit");
@@ -104,27 +106,29 @@ public class EmployeesController : ControllerBase
             }
         }
 
-        //save an employee
-        Employee employee = new Employee
-        {
-            FirstName = body.FirstName,
-            LastName = body.LastName,
-            Salary = body.Salary.Value,
-            DateOfBirth = body.DateOfBirth.Value
-        };
+        Employee employee = _mapper.Map<Employee>(body);
 
         await _employeeRepository.AddAsync(employee);
 
         await _employeeRepository.SaveChangesAsync();
 
 
+        //get the saved employee
 
-
-        var result = new ApiResponse<bool>
+        var result = new ApiResponse<GetEmployeeDto>
         {
-            Data = true,
+            Data = null,
             Success = true
         };
+
+        Employee savedEmployee = await _employeeRepository.GetByIdAsync(employee.Id);
+
+        if (savedEmployee != null)
+        {
+            result.Data = _mapper.Map<GetEmployeeDto>(savedEmployee);
+            result.Success = true;
+        }
+        
 
         return result;
     }

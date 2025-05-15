@@ -11,6 +11,9 @@ namespace Api.Mappings
         {
             CreateMap<Employee, GetEmployeeDto>();
             CreateMap<Dependent, GetDependentDto>();
+
+            CreateMap<CreateEmployeeDto, Employee>();
+            CreateMap<CreateDependentDto, Dependent>();
         }
     }
 }

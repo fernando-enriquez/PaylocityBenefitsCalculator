@@ -9,6 +9,5 @@ namespace Api.Models
         public string? Description { get; set; }
         public decimal? Value { get; set; }
         public bool Unlimited { get; set; }
-        public string Type { get; set; } = null!;
     }
 }
